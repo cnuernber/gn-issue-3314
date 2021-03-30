@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+
+source scripts/activate-graal
+
+rm -rf generated-classes && mkdir generated-classes
+echo "Making jdk16 bindings"
+clojure -A:jdk-16 -X:make-jdk16-bindings
+
+rm -rf classes && mkdir classes
+echo "Building uberjar"
+clojure -A:jdk-16 -X:depstar
+
+graalvm/bin/native-image \
+    --report-unsupported-elements-at-runtime \
+    --initialize-at-build-time \
+    --no-fallback \
+    --no-server \
+    -H:+ReportExceptionStackTraces \
+    -J-Dclojure.spec.skip-macros=true \
+    -J-Dclojure.compiler.direct-linking=true \
+    -J-Dtech.v3.datatype.graal-native=true \
+    -J--add-modules -Jjdk.incubator.foreign \
+    -J-Dforeign.restricted=permit -J--add-opens \
+    -Jjava.base/java.lang=ALL-UNNAMED \
+    -jar libc.jar graal-main
