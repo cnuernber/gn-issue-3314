@@ -1,8 +1,10 @@
-# Simple FFI Example
+## Usage
 
+Install Clojure command line executable.  Then from root directory:
 
-Here is a simple FFI example that works across JNA, JDK-16 and Graal Native.
+```console
+scripts/compile
+```
 
-Please refer to [this blog post](https://techascent.com/blog/next-gen-native.html) for a quick run through.
-
-* [dtype-next ffi documentation](https://cnuernber.github.io/dtype-next/tech.v3.datatype.ffi.html).
+This should download graal development version and attempt to build an executable
+that uses the foreign module.
